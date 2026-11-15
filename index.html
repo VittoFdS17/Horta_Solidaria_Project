@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNINTER - HortaConnect Solidária</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        uninter: {
+                            navy: '#002554',       // Azul Marinho Oficial UNINTER
+                            navyHover: '#001a3b',
+                            gold: '#FFC72C',       // Amarelo Dourado UNINTER
+                            goldHover: '#e5b020',
+                            light: '#eef4ff'
+                        },
+                        eco: {
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        /* Scrollbar suave */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Aba ativa */
+        .tab-active {
+            color: #002554;
+            border-bottom: 3px solid #FFC72C;
+            font-weight: 700;
+        }
+
+        /* Simulador de Smartphone */
+        .mobile-frame {
+            max-width: 412px;
+            height: 820px;
+            border: 12px solid #001a3b;
+            border-radius: 38px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            position: relative;
+            margin: 1rem auto;
+        }
+
+        .mobile-notch {
+            width: 140px;
+            height: 20px;
+            background-color: #001a3b;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 antialiased selection:bg-uninter-gold selection:text-uninter-navy">
+
+    <!-- ================= TELA 1: AUTENTICAÇÃO (LOGIN / CADASTRO) ================= -->
+    <section id="authSection" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-uninter-navy via-slate-900 to-uninter-navy">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-t-8 border-uninter-gold transition-all">
+            
+            <!-- Topo da Caixa de Login -->
+            <div class="bg-uninter-navy p-6 text-center text-white relative">
+                <div class="inline-flex items-center gap-2 bg-uninter-gold text-uninter-navy font-black px-3 py-1 rounded-lg text-xs tracking-wider shadow mb-3">
+                    <span>UNINTER</span>
+                    <span class="opacity-40">|</span>
+                    <span>ENG. COMPUTAÇÃO</span>
+                </div>
+                <div class="flex items-center justify-center gap-2 text-2xl font-extrabold">
+                    <i class="fa-solid fa-seedling text-eco-500"></i>
+                    <span>HortaConnect <span class="text-uninter-gold">Solidária</span></span>
+                </div>
+                <p class="text-xs text-slate-300 mt-1">Plataforma de Gestão de Hortas Comunitárias e Impacto Social</p>
+            </div>
+
+            <!-- Seletor de Abas (Login / Cadastro) -->
+            <div class="grid grid-cols-2 border-b border-slate-200 bg-slate-50 text-xs font-bold">
+                <button id="btnShowLogin" onclick="switchAuthMode('login')" class="py-3.5 text-uninter-navy border-b-2 border-uninter-gold bg-white transition-all">
+                    <i class="fa-solid fa-right-to-bracket mr-1"></i> ENTRAR (LOGIN)
+                </button>
+                <button id="btnShowRegister" onclick="switchAuthMode('register')" class="py-3.5 text-slate-500 hover:text-uninter-navy transition-all">
+                    <i class="fa-solid fa-user-plus mr-1"></i> CRIAR CONTA
+                </button>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">E-mail Institucional ou Cadastrado</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-envelope absolute left-3.5 top-3 text-slate-400"></i>
+                        <input type="email" id="loginEmail" required value="aluno@uninter.com" class="w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none" placeholder="seu.email@uninter.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Senha de Acesso</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400"></i>
+                        <input type="password" id="loginPassword" required value="123456" class="w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-[11px] text-slate-500">
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" checked class="rounded text-uninter-navy"> Lembrar acesso
+                    </label>
+                    <span class="text-uninter-navy font-semibold">Credenciais de demonstração preenchidas</span>
+                </div>
+
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3 bg-uninter-navy hover:bg-uninter-navyHover text-white font-bold rounded-xl shadow-md border-b-4 border-uninter-gold transition-all flex items-center justify-center gap-2 text-sm">
+                    <span>Acessar Plataforma</span>
+                    <i class="fa-solid fa-arrow-right text-uninter-gold"></i>
+                </button>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="p-6 space-y-3.5 text-xs hidden">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nome Completo</label>
+                    <input type="text" id="regName" required placeholder="Ex: João Silva (Aluno UNINTER)" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">E-mail</label>
+                    <input type="email" id="regEmail" required placeholder="seu.email@exemplo.com" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Perfil de Participação</label>
+                    <select id="regRole" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none bg-white">
+                        <option value="Voluntário Extensionista">Voluntário Extensionista</option>
+                        <option value="Doador de Insumos">Doador de Insumos / Sementes</option>
+                        <option value="Coordenador de Horta">Coordenador de Horta Comunitária</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Criar Senha</label>
+                    <input type="password" id="regPassword" required placeholder="Mínimo 6 caracteres" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-eco-600 hover:bg-eco-700 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Concluir Cadastro e Entrar</span>
+                </button>
+            </form>
+
+            <!-- Rodapé da Caixa de Login -->
+            <div class="bg-slate-100 p-3 text-center text-[11px] text-slate-500 border-t border-slate-200">
+                Atividade Extensionista • Centro Universitário Internacional UNINTER
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= TELA 2: PAINEL PRINCIPAL DO APLICATIVO ================= -->
+    <div id="mainAppSection" class="hidden min-h-screen flex flex-col">
+        
+        <!-- Wrapper que permite alternar entre Desktop e Moldura Smartphone -->
+        <div id="appWrapper" class="flex-1 flex flex-col w-full bg-slate-50 transition-all duration-300">
+            
+            <!-- Notch visual exclusivo do Modo Smartphone -->
+            <div id="mobileNotch" class="hidden mobile-notch"></div>
+
+            <!-- Cabeçalho Institucional UNINTER -->
+            <header class="bg-uninter-navy text-white shadow-md sticky top-0 z-40 border-b-4 border-uninter-gold">
+                <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                    
+                    <!-- Logo & Título -->
+                    <div class="flex items-center gap-2.5">
+                        <div class="bg-uninter-gold text-uninter-navy px-2 py-1 rounded-lg font-black text-[11px] tracking-wider shadow">
+                            UNINTER
+                        </div>
+                        <div>
+                            <h1 class="text-sm sm:text-base font-bold leading-tight flex items-center gap-1.5">
+                                <i class="fa-solid fa-seedling text-eco-500"></i>
+                                <span>UNINTER - HortaConnect Solidária</span>
+                            </h1>
+                            <p class="text-[10px] text-slate-300">Engenharia da Computação - Atividade Extensionista</p>
+                        </div>
+                    </div>
+
+                    <!-- Ações do Cabeçalho -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleMobileFrame()" class="hidden sm:flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg text-xs font-medium border border-white/20 transition-all">
+                            <i class="fa-solid fa-mobile-screen-button text-uninter-gold"></i>
+                            <span id="mobileToggleLabel">Modo Smartphone</span>
+                        </button>
+
+                        <button onclick="openBancaModal()" class="flex items-center gap-1.5 bg-uninter-gold hover:bg-uninter-goldHover text-uninter-navy font-bold px-2.5 py-1.5 rounded-lg text-xs shadow transition-all">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Ficha Técnica (Banca)</span>
+                        </button>
+
+                        <button onclick="handleLogout()" title="Sair do sistema" class="flex items-center gap-1 bg-red-600/90 hover:bg-red-700 text-white font-semibold px-2.5 py-1.5 rounded-lg text-xs transition-all">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span class="hidden md:inline">Sair</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Barra de Navegação por Abas -->
+            <nav class="bg-white border-b border-slate-200 px-4 flex overflow-x-auto gap-5 text-xs font-medium text-slate-600 shadow-sm shrink-0">
+                <button onclick="switchMainTab('dashboard')" id="nav-dashboard" class="py-3 px-1 whitespace-nowrap tab-active flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard & Logística
+                </button>
+                <button onclick="switchMainTab('cadastro')" id="nav-cadastro" class="py-3 px-1 whitespace-nowrap flex items-center gap-1.5 hover:text-uninter-navy">
+                    <i class="fa-solid fa-plus-circle text-eco-600"></i> Cadastrar Nova Horta
+                </button>
+                <button onclick="switchMainTab('ia')" id="nav-ia" class="py-3 px-1 whitespace-nowrap flex items-center gap-1.5 hover:text-uninter-navy">
+                    <i class="fa-solid fa-robot text-uninter-navy"></i> Assistente IA Agronômico
+                </button>
+            </nav>
+
+            <!-- Área de Conteúdo Principal -->
+            <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6 overflow-y-auto">
+                
+                <!-- Saudação Personalizada -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-l-4 border-uninter-navy">
+                    <div>
+                        <p class="text-xs text-slate-500">Bem-vindo(a) ao painel extensionista,</p>
+                        <h2 class="text-base font-bold text-uninter-navy" id="loggedUserDisplay">Aluno Extensionista UNINTER</h2>
+                    </div>
+                    <span id="loggedRoleBadge" class="self-start sm:self-auto bg-uninter-light text-uninter-navy border border-uninter-navy/20 text-[11px] font-bold px-3 py-1 rounded-full">
+                        Perfil: Voluntário Extensionista
+                    </span>
+                </div>
+
+                <!-- 4 Cards de Métricas em Tempo Real -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm border-t-4 border-uninter-navy">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-semibold text-slate-500">Hortas Ativas</span>
+                            <i class="fa-solid fa-map-location-dot text-uninter-navy text-base"></i>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800" id="metric-hortas">4</p>
+                        <span class="text-[10px] text-eco-600 font-semibold"><i class="fa-solid fa-arrow-up"></i> Mapeadas no sistema</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm border-t-4 border-eco-500">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-semibold text-slate-500">Alimentos Colhidos</span>
+                            <i class="fa-solid fa-basket-shopping text-eco-600 text-base"></i>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800"><span id="metric-kg">1.240</span> <span class="text-xs font-bold">kg</span></p>
+                        <span class="text-[10px] text-eco-600 font-semibold">100% Orgânicos</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm border-t-4 border-uninter-gold">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-semibold text-slate-500">Voluntários</span>
+                            <i class="fa-solid fa-users text-amber-500 text-base"></i>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800" id="metric-voluntarios">68</p>
+                        <span class="text-[10px] text-amber-600 font-semibold">Comunidade & UNINTER</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm border-t-4 border-uninter-navy">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-semibold text-slate-500">Famílias Beneficiadas</span>
+                            <i class="fa-solid fa-house-chimney-heart text-uninter-navy text-base"></i>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800" id="metric-familias">295</p>
+                        <span class="text-[10px] text-slate-500 font-semibold">Cestas distribuídas</span>
+                    </div>
+                </div>
+
+                <!-- ================= ABA 1: DASHBOARD & LOGÍSTICA ================= -->
+                <div id="view-dashboard" class="space-y-6">
+                    <!-- Gráfico Chart.js -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                            <div>
+                                <h3 class="font-bold text-uninter-navy text-sm">Desempenho de Colheita vs. Meta Mensal (kg)</h3>
+                                <p class="text-[11px] text-slate-500">Monitoramento logístico integrado (Chart.js)</p>
+                            </div>
+                            <span class="bg-uninter-gold/20 text-uninter-navy text-[10px] font-bold px-2.5 py-1 rounded-lg">ODS 02 • Fome Zero</span>
+                        </div>
+                        <div class="h-60 w-full">
+                            <canvas id="harvestChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Hortas Cadastradas -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="bg-uninter-navy text-white px-5 py-3.5 flex items-center justify-between">
+                            <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-uninter-gold"></i>
+                                <span>Hortas Comunitárias Cadastradas</span>
+                            </h3>
+                            <button onclick="switchMainTab('cadastro')" class="bg-uninter-gold text-uninter-navy text-[11px] font-bold px-2.5 py-1 rounded-lg hover:bg-uninter-goldHover">
+                                + Nova Horta
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 font-bold">
+                                        <th class="p-3">Nome da Horta</th>
+                                        <th class="p-3">Bairro / Local</th>
+                                        <th class="p-3">Cultivo Principal</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3 text-right">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hortasTableBody" class="divide-y divide-slate-100">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ABA 2: CADASTRAR NOVA HORTA ================= -->
+                <div id="view-cadastro" class="hidden">
+                    <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl border border-slate-200 shadow-sm border-t-4 border-uninter-navy">
+                        <h3 class="text-base font-bold text-uninter-navy mb-1">Cadastrar Nova Horta Comunitária</h3>
+                        <p class="text-xs text-slate-500 mb-4">Adicione um novo ponto de cultivo para atualizar o mapa e os indicadores em tempo real.</p>
+
+                        <form onsubmit="handleAddHorta(event)" class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Nome da Horta / Projeto</label>
+                                <input type="text" id="newHortaName" required placeholder="Ex: Horta Solidária Vila Verde" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Bairro / Região</label>
+                                    <input type="text" id="newHortaLocal" required placeholder="Ex: Centro / Polo UNINTER" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Cultivo Principal</label>
+                                    <input type="text" id="newHortaCrop" required placeholder="Ex: Alface, Tomate e Couve" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Situação Atual</label>
+                                <select id="newHortaStatus" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-uninter-navy outline-none bg-white">
+                                    <option value="Pronta para Colheita">Pronta para Colheita</option>
+                                    <option value="Em Plantio">Em Plantio</option>
+                                    <option value="Precisa de Voluntários">Precisa de Voluntários</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full py-3 bg-uninter-navy hover:bg-uninter-navyHover text-white font-bold rounded-xl shadow border-b-4 border-uninter-gold transition-all">
+                                <i class="fa-solid fa-floppy-disk text-uninter-gold mr-1"></i> Salvar Horta no Sistema
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ================= ABA 3: ASSISTENTE IA AGRONÔMICO ================= -->
+                <div id="view-ia" class="hidden">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5 border-t-4 border-uninter-gold">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-uninter-navy text-uninter-gold flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-uninter-navy text-base">Assistente IA Agronômico (Módulo Python/JS)</h3>
+                                <p class="text-xs text-slate-500">Selecione a cultura e o sintoma observado para receber uma recomendação orgânica imediata.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">1. Escolha a Cultura</label>
+                                <select id="iaCropSelect" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white outline-none focus:ring-2 focus:ring-uninter-navy">
+                                    <option value="Alface">🥬 Alface</option>
+                                    <option value="Tomate">🍅 Tomate</option>
+                                    <option value="Couve">🌿 Couve</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">2. Sintoma Observado</label>
+                                <select id="iaProblemSelect" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white outline-none focus:ring-2 focus:ring-uninter-navy">
+                                    <option value="Folhas amareladas">Folhas amareladas</option>
+                                    <option value="Pragas / Pulgões">Pragas / Pulgões</option>
+                                    <option value="Solo seco / Murcha">Solo seco / Murcha</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-end">
+                                <button onclick="runAgronomicAI()" class="w-full py-2.5 bg-uninter-navy hover:bg-uninter-navyHover text-white font-bold rounded-xl border-b-2 border-uninter-gold transition-all">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-uninter-gold mr-1"></i> Gerar Diagnóstico
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="iaResultContainer" class="p-4 bg-uninter-light rounded-xl border border-uninter-navy/20 text-xs text-slate-700 leading-relaxed">
+                            <p class="text-slate-500 italic text-center">Selecione os parâmetros acima e clique em "Gerar Diagnóstico" para consultar a base de conhecimento agrícola.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Rodapé Institucional UNINTER com Identificação Editável -->
+            <footer class="bg-uninter-navy text-white py-3 px-4 text-center text-[11px] border-t-4 border-uninter-gold shrink-0">
+                <p class="font-semibold">Centro Universitário Internacional UNINTER • Bacharelado em Engenharia da Computação</p>
+                <p class="text-uninter-gold mt-0.5">
+                    Desenvolvido por: <span id="footerStudentName" class="underline font-bold">Seu Nome Completo</span> | RU: <span id="footerStudentRU" class="underline font-bold">0000000</span>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: FICHA TÉCNICA PARA BANCA UNINTER ================= -->
+    <div id="bancaModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-5 border-t-8 border-uninter-navy">
+            <div class="flex justify-between items-start border-b border-slate-200 pb-3">
+                <div>
+                    <span class="bg-uninter-gold text-uninter-navy text-[10px] font-black px-2.5 py-0.5 rounded uppercase">Documentação Extensionista</span>
+                    <h3 class="text-lg font-extrabold text-uninter-navy mt-1">Ficha Técnica do Projeto (Banca UNINTER)</h3>
+                </div>
+                <button onclick="closeBancaModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Campos Editáveis para o Aluno Personalizar antes de Gravar o Vídeo -->
+            <div class="bg-uninter-light p-4 rounded-xl border border-uninter-navy/20 space-y-3 text-xs">
+                <p class="font-bold text-uninter-navy"><i class="fa-solid fa-id-card mr-1"></i> Identificação do Autor (Atualiza o Rodapé do App):</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Nome Completo do Aluno</label>
+                        <input type="text" id="inputStudentName" oninput="updateAuthorInfo()" placeholder="Digite seu nome completo" class="w-full p-2 border border-slate-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-uninter-navy">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Seu RU UNINTER</label>
+                        <input type="text" id="inputStudentRU" oninput="updateAuthorInfo()" placeholder="Ex: 3965834" class="w-full p-2 border border-slate-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-uninter-navy">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-700">
+                <div>
+                    <h4 class="font-bold text-uninter-navy mb-1">🎯 Objetivos de Desenvolvimento Sustentável (ODS):</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-md text-[11px]">ODS 02: Fome Zero e Agricultura Sustentável</span>
+                        <span class="bg-orange-100 text-orange-900 font-bold px-2.5 py-1 rounded-md text-[11px]">ODS 11: Cidades e Comunidades Sustentáveis</span>
+                        <span class="bg-blue-100 text-blue-900 font-bold px-2.5 py-1 rounded-md text-[11px]">ODS 17: Parcerias e Meios de Implementação</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-uninter-navy mb-1">💻 Stack Tecnológica & Arquitetura:</h4>
+                    <ul class="list-disc pl-5 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <li><strong>Linguagens:</strong> Python (Backend / Lógica de Negócio), HTML5, CSS3 e JavaScript ES6+.</li>
+                        <li><strong>Estilização & Prototipagem:</strong> Tailwind CSS (Identidade Visual UNINTER) e Figma.</li>
+                        <li><strong>Visualização de Dados:</strong> Biblioteca Chart.js para análise de safras e metas.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex justify-end">
+                <button onclick="closeBancaModal()" class="bg-uninter-navy hover:bg-uninter-navyHover text-white font-bold px-5 py-2 rounded-xl text-xs border-b-2 border-uninter-gold">
+                    Concluir e Voltar ao App
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 bg-uninter-navy text-white px-4 py-3 rounded-xl shadow-xl border-l-4 border-uninter-gold text-xs font-semibold hidden z-50 transition-all">
+        <span id="toastMessage">Ação concluída!</span>
+    </div>
+
+    <!-- ================= SCRIPTS DA APLICAÇÃO ================= -->
+    <script>
+        // Estado inicial do aplicativo
+        const appState = {
+            user: {
+                name: "Aluno Extensionista UNINTER",
+                role: "Voluntário Extensionista"
+            },
+            isMobileMode: false,
+            hortas: [
+                { id: 1, nome: "Horta Comunitária Polo Centro", local: "Centro / UNINTER", cultivo: "Alface, Rúcula e Tomate", status: "Pronta para Colheita" },
+                { id: 2, nome: "Horta Escolar Sabiá", local: "Jardim das Flores", cultivo: "Cenoura, Beterraba e Couve", status: "Em Plantio" },
+                { id: 3, nome: "Horta Solidária Vila Nova", local: "Vila Nova", cultivo: "Temperos e Hortaliças", status: "Precisa de Voluntários" },
+                { id: 4, nome: "Horta Comunitária Esperança", local: "Bairro Social", cultivo: "Mandioca e Abóbora", status: "Pronta para Colheita" }
+            ],
+            chartInstance: null
+        };
+
+        // --- FUNÇÕES DE AUTENTICAÇÃO ---
+        function switchAuthMode(mode) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const btnLogin = document.getElementById('btnShowLogin');
+            const btnReg = document.getElementById('btnShowRegister');
+
+            if (mode === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                btnLogin.className = "py-3.5 text-uninter-navy border-b-2 border-uninter-gold bg-white transition-all";
+                btnReg.className = "py-3.5 text-slate-500 hover:text-uninter-navy transition-all";
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                btnReg.className = "py-3.5 text-uninter-navy border-b-2 border-uninter-gold bg-white transition-all";
+                btnLogin.className = "py-3.5 text-slate-500 hover:text-uninter-navy transition-all";
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const btn = document.getElementById('loginSubmitBtn');
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin text-uninter-gold"></i> <span>Autenticando...</span>';
+            
+            setTimeout(() => {
+                const displayName = email === 'aluno@uninter.com' ? 'Aluno Extensionista UNINTER' : email.split('@')[0];
+                enterMainApp(displayName, 'Voluntário Extensionista');
+                btn.innerHTML = '<span>Acessar Plataforma</span> <i class="fa-solid fa-arrow-right text-uninter-gold"></i>';
+            }, 600);
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('regName').value;
+            const role = document.getElementById('regRole').value;
+            
+            // Atualiza também os campos de autor no rodapé
+            document.getElementById('footerStudentName').innerText = name;
+            document.getElementById('inputStudentName').value = name;
+
+            enterMainApp(name, role);
+            showToast(`Conta criada com sucesso! Bem-vindo(a), ${name}.`);
+        }
+
+        function enterMainApp(userName, userRole) {
+            appState.user.name = userName;
+            appState.user.role = userRole;
+
+            document.getElementById('loggedUserDisplay').innerText = userName;
+            document.getElementById('loggedRoleBadge').innerText = `Perfil: ${userRole}`;
+
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('mainAppSection').classList.remove('hidden');
+
+            renderHortasTable();
+            initHarvestChart();
+        }
+
+        function handleLogout() {
+            document.getElementById('mainAppSection').classList.add('hidden');
+            document.getElementById('authSection').classList.remove('hidden');
+            showToast("Sessão encerrada com segurança.");
+        }
+
+        // --- NAVEGAÇÃO E MODO SMARTPHONE ---
+        function switchMainTab(tabName) {
+            const views = ['dashboard', 'cadastro', 'ia'];
+            views.forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+                document.getElementById(`nav-${v}`).classList.remove('tab-active');
+            });
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabName}`).classList.add('tab-active');
+        }
+
+        function toggleMobileFrame() {
+            const wrapper = document.getElementById('appWrapper');
+            const notch = document.getElementById('mobileNotch');
+            const label = document.getElementById('mobileToggleLabel');
+
+            appState.isMobileMode = !appState.isMobileMode;
+
+            if (appState.isMobileMode) {
+                wrapper.classList.add('mobile-frame');
+                notch.classList.remove('hidden');
+                label.innerText = "Modo Desktop";
+                showToast("Visualização Smartphone ativada para gravação!");
+            } else {
+                wrapper.classList.remove('mobile-frame');
+                notch.classList.add('hidden');
+                label.innerText = "Modo Smartphone";
+            }
+        }
+
+        // --- GESTÃO DE HORTAS ---
+        function renderHortasTable() {
+            const tbody = document.getElementById('hortasTableBody');
+            tbody.innerHTML = appState.hortas.map(h => {
+                let badgeClass = 'bg-emerald-100 text-emerald-800';
+                if (h.status === 'Em Plantio') badgeClass = 'bg-blue-100 text-blue-800';
+                if (h.status === 'Precisa de Voluntários') badgeClass = 'bg-amber-100 text-amber-800';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 font-bold text-uninter-navy">${h.nome}</td>
+                        <td class="p-3 text-slate-600"><i class="fa-solid fa-location-dot text-uninter-gold mr-1"></i>${h.local}</td>
+                        <td class="p-3 text-slate-600">${h.cultivo}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">${h.status}</span>
+                        </td>
+                        <td class="p-3 text-right">
+                            <button onclick="registerVolunteerAction('${h.nome}')" class="bg-uninter-navy hover:bg-uninter-navyHover text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">
+                                Apoiar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('metric-hortas').innerText = appState.hortas.length;
+        }
+
+        function handleAddHorta(event) {
+            event.preventDefault();
+            const nome = document.getElementById('newHortaName').value;
+            const local = document.getElementById('newHortaLocal').value;
+            const cultivo = document.getElementById('newHortaCrop').value;
+            const status = document.getElementById('newHortaStatus').value;
+
+            appState.hortas.unshift({
+                id: Date.now(),
+                nome,
+                local,
+                cultivo,
+                status
+            });
+
+            // Atualiza métricas simuladas
+            const currentVol = parseInt(document.getElementById('metric-voluntarios').innerText);
+            document.getElementById('metric-voluntarios').innerText = currentVol + 3;
+
+            event.target.reset();
+            renderHortasTable();
+            switchMainTab('dashboard');
+            showToast(`Horta "${nome}" cadastrada com sucesso!`);
+        }
+
+        function registerVolunteerAction(hortaName) {
+            const currentVol = parseInt(document.getElementById('metric-voluntarios').innerText);
+            document.getElementById('metric-voluntarios').innerText = currentVol + 1;
+            showToast(`Você se voluntariou para apoiar: ${hortaName}!`);
+        }
+
+        // --- ASSISTENTE IA AGRONÔMICO ---
+        function runAgronomicAI() {
+            const crop = document.getElementById('iaCropSelect').value;
+            const problem = document.getElementById('iaProblemSelect').value;
+            const resultBox = document.getElementById('iaResultContainer');
+
+            resultBox.innerHTML = `<p class="text-uninter-navy font-semibold text-center py-3"><i class="fa-solid fa-spinner animate-spin text-uninter-gold mr-2"></i>Processando análise agronômica...</p>`;
+
+            setTimeout(() => {
+                let recommendation = "";
+                if (problem === "Folhas amareladas") {
+                    recommendation = `Deficiência de nitrogênio ou excesso de retenção hídrica no cultivo de <strong>${crop}</strong>. Recomenda-se aplicar composto orgânico rico em húmus de minhoca e verificar a drenagem do canteiro.`;
+                } else if (problem === "Pragas / Pulgões") {
+                    recommendation = `Infestação inicial detectada em <strong>${crop}</strong>. Utilize calda de sabão neutro biodegradável diluído em água (1%) ou óleo de neem natural ao entardecer, evitando agrotóxicos.`;
+                } else {
+                    recommendation = `Estresse hídrico no cultivo de <strong>${crop}</strong>. Implementar cobertura morta (palha seca) sobre o solo para reter umidade e realizar rega por gotejamento no início da manhã.`;
+                }
+
+                resultBox.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between border-b border-uninter-navy/10 pb-1.5">
+                            <span class="font-extrabold text-uninter-navy">Diagnóstico IA: ${crop} • ${problem}</span>
+                            <span class="bg-eco-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Manejo Orgânico</span>
+                        </div>
+                        <p class="text-slate-700">${recommendation}</p>
+                    </div>
+                `;
+            }, 450);
+        }
+
+        // --- MODAL BANCA E IDENTIFICAÇÃO DO ALUNO ---
+        function openBancaModal() {
+            document.getElementById('bancaModal').classList.remove('hidden');
+        }
+
+        function closeBancaModal() {
+            document.getElementById('bancaModal').classList.add('hidden');
+        }
+
+        function updateAuthorInfo() {
+            const nameVal = document.getElementById('inputStudentName').value.trim();
+            const ruVal = document.getElementById('inputStudentRU').value.trim();
+
+            document.getElementById('footerStudentName').innerText = nameVal || "Seu Nome Completo";
+            document.getElementById('footerStudentRU').innerText = ruVal || "0000000";
+        }
+
+        // --- GRÁFICO CHART.JS ---
+        function initHarvestChart() {
+            const ctx = document.getElementById('harvestChart').getContext('2d');
+            if (appState.chartInstance) {
+                appState.chartInstance.destroy();
+            }
+
+            appState.chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'],
+                    datasets: [
+                        {
+                            label: 'Colheita Realizada (kg)',
+                            data: [150, 190, 210, 240, 280, 320],
+                            backgroundColor: '#002554', // Azul UNINTER
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Meta Mensal (kg)',
+                            data: [160, 180, 200, 230, 260, 300],
+                            backgroundColor: '#FFC72C', // Amarelo UNINTER
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 11, weight: 'bold' } }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // --- NOTIFICAÇÃO TOAST ---
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
