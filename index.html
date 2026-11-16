@@ -27,27 +27,23 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- BARRA DE FERRAMENTAS SUPERIOR (Modo Smartphone & Ficha Técnica) -->
+    <!-- BARRA DE FERRAMENTAS SUPERIOR (Apenas Modo Smartphone) -->
     <header class="bg-uninterBlue text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <div class="bg-uninterGold text-uninterBlue font-black p-2 rounded-lg shadow">
                     <i class="fa-solid fa-seedling text-xl"></i>
                 </div>
                 <div>
                     <h1 class="font-bold text-lg leading-tight">HortaConnect</h1>
-                    <p class="text-xs text-uninterGold font-medium">Projeto Extensionista • Eng. da Computação UNINTER</p>
+                    <p class="text-xs text-uninterGold font-medium">Extensão Universitária • Eng. da Computação UNINTER</p>
                 </div>
             </div>
             
-            <div class="flex items-center space-x-2 mt-2 sm:mt-0">
+            <div class="flex items-center space-x-2">
                 <button onclick="toggleMobileFrame()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-600 transition flex items-center space-x-1">
                     <i class="fa-solid fa-mobile-screen"></i>
                     <span id="frameModeText">Modo Smartphone</span>
-                </button>
-                <button onclick="openModal('techModal')" class="bg-uninterGold text-uninterBlue font-bold text-xs px-3 py-1.5 rounded-lg hover:bg-amber-400 transition shadow flex items-center space-x-1">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <span>Ficha Técnica (Banca)</span>
                 </button>
             </div>
         </div>
@@ -187,18 +183,18 @@
                                     <div class="flex items-center space-x-3">
                                         <div class="bg-emerald-500 text-white p-2 rounded-lg text-xs"><i class="fa-solid fa-carrot"></i></div>
                                         <div>
-                                            <p class="text-xs font-bold text-slate-800">Doação Disponível: 15kg de Cenouras e Alface</p>
-                                            <p class="text-[10px] text-slate-400">Horta Urbana Comunitária • Bairro Centro</p>
+                                            <p class="text-xs font-bold text-slate-800">Doação: 15kg de Cenouras e Alface</p>
+                                            <p class="text-[10px] text-slate-500">Contato: (41) 99888-7766 | Horta Centro</p>
                                         </div>
                                     </div>
                                     <span class="text-[10px] bg-green-100 text-ecoGreen px-2 py-1 rounded font-bold">Disponível</span>
                                 </div>
                                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
                                     <div class="flex items-center space-x-3">
-                                        <div class="bg-amber-500 text-white p-2 rounded-lg text-xs"><i class="fa-solid fa-hands-bound"></i></div>
+                                        <div class="bg-amber-500 text-white p-2 rounded-lg text-xs"><i class="fa-solid fa-basket-shopping"></i></div>
                                         <div>
-                                            <p class="text-xs font-bold text-slate-800">Solicitação de Apoio Alimentar</p>
-                                            <p class="text-[10px] text-slate-400">Família Atendida • Zona Norte</p>
+                                            <p class="text-xs font-bold text-slate-800">Solicitação de Cesta Verde</p>
+                                            <p class="text-[10px] text-slate-500">Contato: contato.familia@email.com | Zona Norte</p>
                                         </div>
                                     </div>
                                     <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold">Em Atendimento</span>
@@ -207,11 +203,11 @@
                         </div>
                     </div>
 
-                    <!-- ABA 2: MÉTRICAS (Painel com curva inicial progressiva) -->
+                    <!-- ABA 2: MÉTRICAS (Últimos 5 meses reais) -->
                     <div id="tabMetricsContent" class="space-y-6 hidden">
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 class="font-bold text-sm text-slate-700 uppercase mb-2">Desempenho Inicial do Aplicativo</h3>
-                            <p class="text-xs text-slate-400 mb-4">Acompanhamento dos primeiros meses de implantação da horta e captação inicial de insumos.</p>
+                            <h3 class="font-bold text-sm text-slate-700 uppercase mb-2">Desempenho dos Últimos Meses</h3>
+                            <p class="text-xs text-slate-400 mb-4">Acompanhamento da evolução de metas e captação de doações na rede comunitária.</p>
                             <div class="h-64">
                                 <canvas id="metricsChart"></canvas>
                             </div>
@@ -256,48 +252,13 @@
         </div>
     </div>
 
-    <!-- RODAPÉ INSTITUCIONAL (Com nome e RU solicitados) -->
+    <!-- RODAPÉ INSTITUCIONAL COM NOME E RU -->
     <footer class="bg-slate-900 text-slate-400 text-xs py-4 px-6 border-t border-slate-800 text-center">
         <p>HortaConnect • Projeto de Extensão Acadêmica • <span class="text-uninterGold font-semibold">UNINTER</span></p>
         <p class="mt-1 text-slate-500">Desenvolvido por: <strong class="text-slate-300">João Vitor França de Souza</strong> | RU: <strong class="text-slate-300">5035670</strong></p>
     </footer>
 
-    <!-- MODAL DE FICHA TÉCNICA (BANCA DA UNINTER) -->
-    <div id="techModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="bg-uninterBlue text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm"><i class="fa-solid fa-graduation-cap"></i> Ficha Técnica - Banca Avaliadora UNINTER</h3>
-                <button onclick="closeModal('techModal')" class="text-uninterGold hover:text-white font-bold text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
-                <div>
-                    <h4 class="font-bold text-uninterBlue text-sm mb-1">1. Aluno e Identificação</h4>
-                    <p><strong>Nome:</strong> João Vitor França de Souza</p>
-                    <p><strong>RU:</strong> 5035670</p>
-                    <p><strong>Curso:</strong> Bacharelado em Engenharia da Computação</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-uninterBlue text-sm mb-1">2. Objetivos do Projeto (Conforme Gabarito)</h4>
-                    <p><strong>Objetivo Geral:</strong> Desenvolver uma aplicação web responsiva (App) denominada <strong>HortaConnect</strong>, utilizando as linguagens de programação <strong>Python</strong>, <strong>HTML5</strong>, <strong>CSS3</strong> e <strong>JavaScript</strong>, com o auxílio do framework <strong>Tailwind CSS</strong>, da biblioteca gráfica <strong>Chart.js</strong> e prototipagem no <strong>Figma</strong>, visando mapear hortas comunitárias e conectar voluntários e doadores.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-uninterBlue text-sm mb-1">3. Objetivos de Desenvolvimento Sustentável (ODS)</h4>
-                    <p>• ODS 02: Fome zero e agricultura sustentável</p>
-                    <p>• ODS 11: Cidades e comunidades sustentáveis</p>
-                    <p>• ODS 17: Parcerias e meios de implementação</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-uninterBlue text-sm mb-1">4. Arquitetura Tecnológica</h4>
-                    <p>Frontend responsivo baseado em Web Components e estilização utilitária. Backend simulado com rotas e lógica em Python/JavaScript, integrando inteligência artificial heurística para diagnóstico agrícola e painel analítico com Chart.js.</p>
-                </div>
-            </div>
-            <div class="bg-slate-100 p-4 border-t flex justify-end">
-                <button onclick="closeModal('techModal')" class="bg-uninterBlue text-uninterGold font-bold px-4 py-2 rounded-lg text-xs">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: QUERO DOAR -->
+    <!-- MODAL: QUERO DOAR (Com opção de privacidade de contato) -->
     <div id="donateModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -310,15 +271,19 @@
                     <input type="text" id="donateItem" placeholder="Ex: 10kg de Tomate Orgânico" class="w-full p-2.5 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-ecoGreen">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Local / Horta de Origem</label>
-                    <input type="text" id="donateLocation" placeholder="Ex: Horta Comunitária Sul" class="w-full p-2.5 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-ecoGreen">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone ou E-mail para Contato</label>
+                    <input type="text" id="donateContact" placeholder="Ex: (41) 99999-8888" class="w-full p-2.5 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-ecoGreen">
                 </div>
-                <button onclick="submitDonation()" class="w-full bg-ecoGreen hover:bg-green-800 text-white font-bold py-2.5 rounded-xl text-xs transition">Confirmar Doação</button>
+                <div class="flex items-center space-x-2 pt-1">
+                    <input type="checkbox" id="showContactDonate" checked class="w-4 h-4 text-ecoGreen rounded focus:ring-ecoGreen">
+                    <label for="showContactDonate" class="text-xs text-slate-600 font-medium">Deixar meu contato visível publicamente no mural</label>
+                </div>
+                <button onclick="submitDonation()" class="w-full bg-ecoGreen hover:bg-green-800 text-white font-bold py-2.5 rounded-xl text-xs transition mt-2">Confirmar Doação</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: ESTOU PRECISANDO -->
+    <!-- MODAL: ESTOU PRECISANDO (Com opção de privacidade de contato) -->
     <div id="requestModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -331,10 +296,14 @@
                     <input type="text" id="requestItem" placeholder="Ex: Cesta Verde Básica" class="w-full p-2.5 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-uninterGold">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Bairro / Região</label>
-                    <input type="text" id="requestRegion" placeholder="Ex: Bairro Vila Nova" class="w-full p-2.5 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-uninterGold">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone ou E-mail para Contato</label>
+                    <input type="text" id="requestContact" placeholder="Ex: seu.email@exemplo.com" class="w-full p-2.5 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-uninterGold">
                 </div>
-                <button onclick="submitRequest()" class="w-full bg-uninterGold hover:bg-amber-400 text-uninterBlue font-bold py-2.5 rounded-xl text-xs transition">Enviar Solicitação</button>
+                <div class="flex items-center space-x-2 pt-1">
+                    <input type="checkbox" id="showContactRequest" checked class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+                    <label for="showContactRequest" class="text-xs text-slate-600 font-medium">Deixar meu contato visível publicamente no mural</label>
+                </div>
+                <button onclick="submitRequest()" class="w-full bg-uninterGold hover:bg-amber-400 text-uninterBlue font-bold py-2.5 rounded-xl text-xs transition mt-2">Enviar Solicitação</button>
             </div>
         </div>
     </div>
@@ -435,9 +404,12 @@
         // Submissão de Doação
         function submitDonation() {
             const item = document.getElementById('donateItem').value;
-            const loc = document.getElementById('donateLocation').value;
-            if(!item) { alert('Informe o item'); return; }
+            const contact = document.getElementById('donateContact').value;
+            const showContact = document.getElementById('showContactDonate').checked;
 
+            if(!item) { alert('Informe o item da doação'); return; }
+
+            const contactText = (showContact && contact) ? `Contato: ${contact}` : 'Contato sigiloso (Privado)';
             const feed = document.getElementById('communityFeed');
             const newDiv = document.createElement('div');
             newDiv.className = "p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center animate-pulse";
@@ -446,7 +418,7 @@
                     <div class="bg-emerald-500 text-white p-2 rounded-lg text-xs"><i class="fa-solid fa-hand-holding-heart"></i></div>
                     <div>
                         <p class="text-xs font-bold text-slate-800">Doação: ${item}</p>
-                        <p class="text-[10px] text-slate-400">${loc || 'Horta Comunitária'}</p>
+                        <p class="text-[10px] text-slate-500">${contactText}</p>
                     </div>
                 </div>
                 <span class="text-[10px] bg-green-100 text-ecoGreen px-2 py-1 rounded font-bold">Disponível</span>
@@ -454,16 +426,19 @@
             feed.prepend(newDiv);
             closeModal('donateModal');
             document.getElementById('donateItem').value = '';
-            document.getElementById('donateLocation').value = '';
+            document.getElementById('donateContact').value = '';
             alert('Doação cadastrada com sucesso no mural!');
         }
 
         // Submissão de Solicitação
         function submitRequest() {
             const item = document.getElementById('requestItem').value;
-            const reg = document.getElementById('requestRegion').value;
+            const contact = document.getElementById('requestContact').value;
+            const showContact = document.getElementById('showContactRequest').checked;
+
             if(!item) { alert('Informe a necessidade'); return; }
 
+            const contactText = (showContact && contact) ? `Contato: ${contact}` : 'Contato sigiloso (Privado)';
             const feed = document.getElementById('communityFeed');
             const newDiv = document.createElement('div');
             newDiv.className = "p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center animate-pulse";
@@ -472,7 +447,7 @@
                     <div class="bg-amber-500 text-white p-2 rounded-lg text-xs"><i class="fa-solid fa-basket-shopping"></i></div>
                     <div>
                         <p class="text-xs font-bold text-slate-800">Solicitação: ${item}</p>
-                        <p class="text-[10px] text-slate-400">${reg || 'Região Comunitária'}</p>
+                        <p class="text-[10px] text-slate-500">${contactText}</p>
                     </div>
                 </div>
                 <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold">Em Atendimento</span>
@@ -480,7 +455,7 @@
             feed.prepend(newDiv);
             closeModal('requestModal');
             document.getElementById('requestItem').value = '';
-            document.getElementById('requestRegion').value = '';
+            document.getElementById('requestContact').value = '';
             alert('Solicitação registrada com sucesso!');
         }
 
@@ -504,7 +479,7 @@
             }, 600);
         }
 
-        // Gráfico de Métricas (Início progressivo - meses iniciais)
+        // Gráfico de Métricas (Últimos 5 meses reais)
         function initMetricsChart() {
             const ctx = document.getElementById('metricsChart').getContext('2d');
             if(metricsChartInstance) {
@@ -513,17 +488,17 @@
             metricsChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Mês 1 (Implantação)', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5'],
+                    labels: ['Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro'],
                     datasets: [{
                         label: 'Meta de Produção (Kg)',
-                        data: [30, 50, 80, 120, 180],
+                        data: [30, 55, 90, 130, 180],
                         borderColor: '#FFC72C',
                         backgroundColor: 'rgba(255, 199, 44, 0.1)',
                         tension: 0.3,
                         fill: true
                     }, {
                         label: 'Doações Realizadas (Kg)',
-                        data: [15, 35, 70, 110, 165],
+                        data: [15, 40, 75, 115, 165],
                         borderColor: '#2D6A4F',
                         backgroundColor: 'rgba(45, 106, 79, 0.1)',
                         tension: 0.3,
